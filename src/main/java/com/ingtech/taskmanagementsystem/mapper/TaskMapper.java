@@ -1,39 +1,36 @@
 package com.ingtech.taskmanagementsystem.mapper;
 
-import com.ingtech.taskmanagementsystem.dto.TaskDto;
+import com.ingtech.taskmanagementsystem.dto.TaskRequestDto;
+import com.ingtech.taskmanagementsystem.dto.TaskResponseDto;
 import com.ingtech.taskmanagementsystem.model.Task;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TaskMapper {
 
-    public TaskDto toDto(Task task) {
+    public TaskResponseDto toDto(Task task) {
+        TaskResponseDto dto = new TaskResponseDto();
 
-        TaskDto taskDto = new TaskDto();
+        dto.setId(task.getId());
+        dto.setTitle(task.getTitle());
+        dto.setDescription(task.getDescription());
+        dto.setTaskStatus(task.getTaskStatus());
+        dto.setDueDate(task.getDueDate());
 
-        taskDto.setId(task.getId());
-        taskDto.setTitle(task.getTitle());
-        taskDto.setDescription(task.getDescription());
-        taskDto.setTaskStatus(task.getTaskStatus());
-        taskDto.setDueDate(task.getDueDate());
-
-        return taskDto;
+        return dto;
     }
 
-
-    public Task toEntity(TaskDto taskDto) {
+    public Task toEntity(TaskRequestDto dto) {
 
         Task task = new Task();
 
-        task.setId(taskDto.getId());
-        task.setTitle(taskDto.getTitle());
-        task.setDescription(taskDto.getDescription());
-        task.setTaskStatus(taskDto.getTaskStatus());
-        task.setDueDate(taskDto.getDueDate());
+        task.setTitle(dto.getTitle());
+        task.setDescription(dto.getDescription());
+        task.setTaskStatus(dto.getTaskStatus());
+        task.setDueDate(dto.getDueDate());
 
         return task;
 
     }
-
 
 }
