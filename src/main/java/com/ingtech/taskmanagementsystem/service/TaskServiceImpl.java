@@ -9,9 +9,12 @@ import com.ingtech.taskmanagementsystem.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +24,7 @@ public class TaskServiceImpl implements TaskService {
 
     private final TaskMapper taskMapper;
 
-
+    @Transactional
     @Override
     public TaskResponseDto createTask(TaskRequestDto dto) {
 
@@ -30,7 +33,7 @@ public class TaskServiceImpl implements TaskService {
         // IF due date is not null and before current date it will throw an exception
         if (dto.getDueDate() != null && dto.getDueDate().isBefore(today)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Due date must be today or in future. You provided: "+dto.getDueDate());
+                    "Due date must be today or in future. You provided: " + dto.getDueDate());
         }
 
         // If no task status is provided, the task status will be PENDING
@@ -45,4 +48,16 @@ public class TaskServiceImpl implements TaskService {
         task = taskRepository.save(task);
         return taskMapper.toDto(task);
     }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<TaskResponseDto> getAllTasks() {
+        return taskRepository.findAll()
+                .stream()
+                .map(task -> taskMapper.toDto(task))
+                .collect(Collectors.toList());
+    }
+
+
+
 }
