@@ -31,4 +31,10 @@ public class TaskController {
                 .body(taskService.getAllTasks());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<TaskResponseDto> getTaskById(@PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(taskService.getTaskById(id));
+    }
+
 }

@@ -2,6 +2,7 @@ package com.ingtech.taskmanagementsystem.service;
 
 import com.ingtech.taskmanagementsystem.dto.TaskRequestDto;
 import com.ingtech.taskmanagementsystem.dto.TaskResponseDto;
+import com.ingtech.taskmanagementsystem.exception.TaskNotFoundException;
 import com.ingtech.taskmanagementsystem.mapper.TaskMapper;
 import com.ingtech.taskmanagementsystem.model.Status;
 import com.ingtech.taskmanagementsystem.model.Task;
@@ -56,6 +57,16 @@ public class TaskServiceImpl implements TaskService {
                 .stream()
                 .map(task -> taskMapper.toDto(task))
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public TaskResponseDto getTaskById(Long id) {
+
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new TaskNotFoundException("Task not found with id: "+id));
+
+        return taskMapper.toDto(task);
     }
 
 

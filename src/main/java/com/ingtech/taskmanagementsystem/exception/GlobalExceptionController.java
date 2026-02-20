@@ -22,7 +22,7 @@ public class GlobalExceptionController {
     @ExceptionHandler(TaskNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleTaskNotFoundException(TaskNotFoundException ex) {
 
-        log.error("Task not found: {}", ex.getMessage());
+        log.error(ex.getMessage());
 
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("status", HttpStatus.NOT_FOUND.value());
