@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -27,7 +28,7 @@ public class GlobalExceptionController {
         body.put("status", HttpStatus.NOT_FOUND.value());
         body.put("error", HttpStatus.NOT_FOUND.getReasonPhrase());
         body.put("message", ex.getMessage());
-        body.put("timestamp", LocalDate.now());
+        body.put("timestamp", LocalDateTime.now());
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -44,7 +45,7 @@ public class GlobalExceptionController {
         body.put("status", ex.getStatusCode().value());
         body.put("error", ((HttpStatus) ex.getStatusCode()).getReasonPhrase());
         body.put("message", ex.getReason());
-        body.put("timestamp", LocalDate.now());
+        body.put("timestamp", LocalDateTime.now());
 
         return ResponseEntity.status(ex.getStatusCode())
                 .contentType(MediaType.APPLICATION_JSON)
