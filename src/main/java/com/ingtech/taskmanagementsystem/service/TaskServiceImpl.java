@@ -43,6 +43,8 @@ public class TaskServiceImpl implements TaskService {
                     "Due date must be today or in future. You provided: "+task.getDueDate());
         }
 
+        // Handle exception globally and throw proper error message in JSON
+
 
         task = taskRepository.save(task);
         return taskMapper.toDto(task);
