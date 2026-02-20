@@ -13,6 +13,8 @@ public interface TaskService {
 
     TaskResponseDto getTaskById(Long id);
 
+    TaskResponseDto updateTask(Long id, TaskRequestDto dto);
+
 
 
 }

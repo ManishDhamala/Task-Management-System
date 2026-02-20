@@ -34,7 +34,6 @@ public class GlobalExceptionController {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidationException(MethodArgumentNotValidException ex) {
 
-        log.error("Validation failed: {}", ex.getMessage());
 
         // Collecting all filed errors into a map {fieldName: errorMessage}
         Map<String, String> fieldErrors = ex.getBindingResult()
@@ -45,6 +44,10 @@ public class GlobalExceptionController {
                         FieldError::getDefaultMessage,
                         (existing, duplicate) -> existing  // keep first error if field has multiple fail validations
                 ));
+
+        log.error("Validation failed for object '{}' -> {}",
+                ex.getObjectName(),
+                fieldErrors);
 
         Map<String, Object> body = buildErrorBody(HttpStatus.BAD_REQUEST, "Validation Failed");
         body.put("errors", fieldErrors);  // adding field errors in body

@@ -4,16 +4,12 @@ import com.ingtech.taskmanagementsystem.dto.TaskRequestDto;
 import com.ingtech.taskmanagementsystem.dto.TaskResponseDto;
 import com.ingtech.taskmanagementsystem.exception.TaskNotFoundException;
 import com.ingtech.taskmanagementsystem.mapper.TaskMapper;
-import com.ingtech.taskmanagementsystem.model.Status;
 import com.ingtech.taskmanagementsystem.model.Task;
 import com.ingtech.taskmanagementsystem.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -54,6 +50,23 @@ public class TaskServiceImpl implements TaskService {
         return taskMapper.toDto(task);
     }
 
+
+    @Transactional
+    @Override
+    public TaskResponseDto updateTask(Long id, TaskRequestDto dto) {
+
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new TaskNotFoundException("Task not found with id: " + id));
+
+        task.setTitle(dto.getTitle());
+        task.setDescription(dto.getDescription());
+        task.setTaskStatus(dto.getTaskStatus());
+        task.setDueDate(dto.getDueDate());
+
+        taskRepository.save(task);
+
+        return taskMapper.toDto(task);
+    }
 
 
 }
