@@ -68,5 +68,15 @@ public class TaskServiceImpl implements TaskService {
         return taskMapper.toDto(task);
     }
 
+    @Transactional
+    @Override
+    public void deleteTask(Long id) {
+
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new TaskNotFoundException("Task not found with id: " + id));
+
+        taskRepository.delete(task);
+    }
+
 
 }
