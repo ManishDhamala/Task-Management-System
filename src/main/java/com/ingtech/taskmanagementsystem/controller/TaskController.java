@@ -2,6 +2,7 @@ package com.ingtech.taskmanagementsystem.controller;
 
 import com.ingtech.taskmanagementsystem.dto.TaskRequestDto;
 import com.ingtech.taskmanagementsystem.dto.TaskResponseDto;
+import com.ingtech.taskmanagementsystem.model.Status;
 import com.ingtech.taskmanagementsystem.service.TaskService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -47,6 +48,12 @@ public class TaskController {
     public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
         taskService.deleteTask(id);
         return ResponseEntity.noContent().build();  // Returns 204 - No content
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<TaskResponseDto>> searchTaskByStatus(@RequestParam Status status) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(taskService.searchTaskByStatus(status));
     }
 
 

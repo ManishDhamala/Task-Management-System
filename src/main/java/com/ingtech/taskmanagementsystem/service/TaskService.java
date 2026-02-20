@@ -2,6 +2,7 @@ package com.ingtech.taskmanagementsystem.service;
 
 import com.ingtech.taskmanagementsystem.dto.TaskRequestDto;
 import com.ingtech.taskmanagementsystem.dto.TaskResponseDto;
+import com.ingtech.taskmanagementsystem.model.Status;
 
 import java.util.List;
 
@@ -16,6 +17,8 @@ public interface TaskService {
     TaskResponseDto updateTask(Long id, TaskRequestDto dto);
 
     void deleteTask(Long id);
+
+    List<TaskResponseDto> searchTaskByStatus(Status taskStatus);
 
 
 

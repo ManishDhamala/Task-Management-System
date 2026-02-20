@@ -4,6 +4,7 @@ import com.ingtech.taskmanagementsystem.dto.TaskRequestDto;
 import com.ingtech.taskmanagementsystem.dto.TaskResponseDto;
 import com.ingtech.taskmanagementsystem.exception.TaskNotFoundException;
 import com.ingtech.taskmanagementsystem.mapper.TaskMapper;
+import com.ingtech.taskmanagementsystem.model.Status;
 import com.ingtech.taskmanagementsystem.model.Task;
 import com.ingtech.taskmanagementsystem.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
@@ -76,6 +77,18 @@ public class TaskServiceImpl implements TaskService {
                 .orElseThrow(() -> new TaskNotFoundException("Task not found with id: " + id));
 
         taskRepository.delete(task);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<TaskResponseDto> searchTaskByStatus(Status taskStatus) {
+
+        List<TaskResponseDto> tasks = taskRepository.findByTaskStatus(taskStatus)
+                .stream()
+                .map(task -> taskMapper.toDto(task))
+                .collect(Collectors.toList());
+
+        return tasks;
     }
 
 
