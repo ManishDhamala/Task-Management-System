@@ -1,7 +1,9 @@
 package com.ingtech.taskmanagementsystem.dto;
 
 import com.ingtech.taskmanagementsystem.model.Status;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,11 +18,13 @@ public class TaskRequestDto {
     @Size(max = 200, message = "Title should not exceed 200 characters")
     private String title;
 
-    @Size(max = 600, message = "Description should not exceed 600 characters" )
+    @Size(max = 600, message = "Description should not exceed 600 characters")
     private String description;
 
+    @NotNull(message = "Please provide a task status")
     private Status taskStatus;
 
+    @FutureOrPresent(message = "Due date must be today or in future")
     private LocalDate dueDate;
 
 }

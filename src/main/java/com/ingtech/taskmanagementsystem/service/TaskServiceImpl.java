@@ -29,21 +29,6 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public TaskResponseDto createTask(TaskRequestDto dto) {
 
-        LocalDate today = LocalDate.now();
-
-        // IF due date is not null and before current date it will throw an exception
-        if (dto.getDueDate() != null && dto.getDueDate().isBefore(today)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Due date must be today or in future. You provided: " + dto.getDueDate());
-        }
-
-        // If no task status is provided, the task status will be PENDING
-        if (dto.getTaskStatus() == null) {
-            dto.setTaskStatus(Status.PENDING);
-        } else {
-            dto.setTaskStatus(dto.getTaskStatus());
-        }
-
         Task task = taskMapper.toEntity(dto);
 
         task = taskRepository.save(task);
@@ -64,7 +49,7 @@ public class TaskServiceImpl implements TaskService {
     public TaskResponseDto getTaskById(Long id) {
 
         Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new TaskNotFoundException("Task not found with id: "+id));
+                .orElseThrow(() -> new TaskNotFoundException("Task not found with id: " + id));
 
         return taskMapper.toDto(task);
     }
