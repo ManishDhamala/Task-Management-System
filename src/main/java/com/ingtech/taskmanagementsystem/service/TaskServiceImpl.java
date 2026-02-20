@@ -8,6 +8,8 @@ import com.ingtech.taskmanagementsystem.model.Status;
 import com.ingtech.taskmanagementsystem.model.Task;
 import com.ingtech.taskmanagementsystem.repository.TaskRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,11 +36,11 @@ public class TaskServiceImpl implements TaskService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<TaskResponseDto> getAllTasks() {
-        return taskRepository.findAll()
-                .stream()
-                .map(task -> taskMapper.toDto(task))
-                .collect(Collectors.toList());
+    public Page<TaskResponseDto> getAllTasks(Pageable pageable) {
+        Page<TaskResponseDto> tasks = taskRepository.findAll(pageable)
+                .map(task -> taskMapper.toDto(task));
+
+        return tasks;
     }
 
     @Transactional(readOnly = true)
@@ -90,6 +92,8 @@ public class TaskServiceImpl implements TaskService {
 
         return tasks;
     }
+
+
 
 
 }

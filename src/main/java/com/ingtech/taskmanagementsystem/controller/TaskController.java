@@ -6,6 +6,9 @@ import com.ingtech.taskmanagementsystem.model.Status;
 import com.ingtech.taskmanagementsystem.service.TaskService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,16 +23,24 @@ public class TaskController {
 
     private final TaskService taskService;
 
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<TaskResponseDto> createTask(@Valid @RequestBody TaskRequestDto dto) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(taskService.createTask(dto));
     }
 
-    @GetMapping("/")
-    public ResponseEntity<List<TaskResponseDto>> getAllTasks() {
+    @GetMapping
+    public ResponseEntity<Page<TaskResponseDto>> getAllTasks(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "3") int size
+    ) {
+
+        // Create pagination object with page number and size
+        Pageable pageable = PageRequest.of(page, size);
+
         return ResponseEntity.status(HttpStatus.OK)
-                .body(taskService.getAllTasks());
+                .body(taskService.getAllTasks(pageable));
+
     }
 
     @GetMapping("/{id}")
