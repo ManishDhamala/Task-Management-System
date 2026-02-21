@@ -26,5 +26,4 @@ public class Task {
 
     private LocalDate dueDate;
 
-
 }
