@@ -173,7 +173,17 @@ class TaskControllerTest {
 
     }
 
+    @Test
+    void deleteTask_returnsNoContent() throws Exception {
 
+        doNothing().when(taskService).deleteTask(1L);
+
+        mockMvc.perform(delete("/api/v1/task/{id}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+
+        verify(taskService, times(1)).deleteTask(1L);
+    }
 
 
 }
