@@ -186,4 +186,47 @@ class TaskControllerTest {
     }
 
 
+    @Test
+    void searchTaskByStatus_returnsListOfTaskResponseDto() throws Exception {
+        when(taskService.searchTaskByStatus(Status.PENDING)).thenReturn(List.of(responseDto1, responseDto2));
+
+        mockMvc.perform(get("/api/v1/task/search")
+                        .param("status", "PENDING")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].id").value(responseDto1.getId()))
+                .andExpect(jsonPath("$[0].title").value(responseDto1.getTitle()))
+                .andExpect(jsonPath("$[0].description").value(responseDto1.getDescription()))
+                .andExpect(jsonPath("$[0].taskStatus").value(responseDto1.getTaskStatus().name()))
+                .andExpect(jsonPath("$[0].dueDate").value(responseDto1.getDueDate().toString()))
+
+                .andExpect(jsonPath("$[1].id").value(responseDto2.getId()))
+                .andExpect(jsonPath("$[1].title").value(responseDto2.getTitle()))
+                .andExpect(jsonPath("$[1].description").value(responseDto2.getDescription()))
+                .andExpect(jsonPath("$[1].taskStatus").value(responseDto2.getTaskStatus().name()))
+                .andExpect(jsonPath("$[1].dueDate").value(responseDto2.getDueDate().toString()));
+
+        verify(taskService, times(1)).searchTaskByStatus(Status.PENDING);
+    }
+
+
+    @Test
+    void searchTaskByStatus_noTasksFound_returnEmptyList() throws Exception{
+
+        when(taskService.searchTaskByStatus(Status.PENDING)).thenReturn(List.of());
+
+        mockMvc.perform(get("/api/v1/task/search")
+                .param("status", "IN_PROGRESS")
+                .contentType(MediaType.APPLICATION_JSON)
+        )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$").isEmpty());
+
+        verify(taskService, times(1)).searchTaskByStatus(Status.IN_PROGRESS);
+
+    }
+
 }
