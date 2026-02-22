@@ -110,6 +110,26 @@ class TaskControllerTest {
     }
 
     @Test
+    void createTask_invalidRequest_returnsValidationErrors() throws Exception {
+
+        TaskRequestDto invalidRequestDto = new TaskRequestDto();
+        invalidRequestDto.setTitle(null);
+        invalidRequestDto.setTaskStatus(null);
+
+        mockMvc.perform(post("/api/v1/task")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidRequestDto)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").value("Validation Failed"))
+                .andExpect(jsonPath("$.errors.title").value("Title is required"))
+                .andExpect(jsonPath("$.errors.taskStatus").value("Please provide a task status"));
+
+        verify(taskService, never()).createTask(any());
+    }
+
+
+    @Test
     void getAllTasks_returnsPageOfTaskResponseDto() throws Exception {
 
         Page<TaskResponseDto> taskPage = new PageImpl<>(List.of(responseDto1, responseDto2),
@@ -225,14 +245,14 @@ class TaskControllerTest {
 
 
     @Test
-    void searchTaskByStatus_noTasksFound_returnEmptyList() throws Exception{
+    void searchTaskByStatus_noTasksFound_returnEmptyList() throws Exception {
 
         when(taskService.searchTaskByStatus(Status.PENDING)).thenReturn(List.of());
 
         mockMvc.perform(get("/api/v1/task/search")
-                .param("status", "IN_PROGRESS")
-                .contentType(MediaType.APPLICATION_JSON)
-        )
+                        .param("status", "IN_PROGRESS")
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$").isEmpty());
