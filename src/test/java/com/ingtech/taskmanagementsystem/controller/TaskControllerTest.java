@@ -3,6 +3,7 @@ package com.ingtech.taskmanagementsystem.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ingtech.taskmanagementsystem.dto.TaskRequestDto;
 import com.ingtech.taskmanagementsystem.dto.TaskResponseDto;
+import com.ingtech.taskmanagementsystem.exception.TaskNotFoundException;
 import com.ingtech.taskmanagementsystem.model.Status;
 import com.ingtech.taskmanagementsystem.model.Task;
 import com.ingtech.taskmanagementsystem.service.TaskService;
@@ -152,6 +153,17 @@ class TaskControllerTest {
 
         verify(taskService, times(1)).getTaskById(1L);
 
+    }
+
+    @Test
+    void getTaskById_nonExistingId_returnsNotFound() throws Exception {
+        when(taskService.getTaskById(15L)).thenThrow(new TaskNotFoundException("Task not found with id: 15"));
+
+        mockMvc.perform(get("/api/v1/task/{id}", 15L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+
+        verify(taskService, times(1)).getTaskById(15L);
     }
 
     @Test
