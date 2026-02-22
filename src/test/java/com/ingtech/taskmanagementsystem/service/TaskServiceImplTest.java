@@ -233,5 +233,41 @@ class TaskServiceImplTest {
         verify(taskRepository, times(1)).delete(task1);
     }
 
+    @Test
+    void searchTaskByStatus_returnsListOfTaskResponseDto() {
+
+        when(taskRepository.findByTaskStatus(Status.PENDING)).thenReturn(List.of(task1, task2));
+        when(taskMapper.toDto(task1)).thenReturn(responseDto1);
+        when(taskMapper.toDto(task2)).thenReturn(responseDto2);
+
+        // Act
+        List<TaskResponseDto> result = taskService.searchTaskByStatus(Status.PENDING);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals(Status.PENDING, result.get(0).getTaskStatus());
+        assertEquals(Status.PENDING, result.get(1).getTaskStatus());
+
+        verify(taskRepository, times(1)).findByTaskStatus(Status.PENDING);
+        verify(taskMapper, times(1)).toDto(task1);
+        verify(taskMapper, times(1)).toDto(task2);
+
+    }
+
+    @Test
+    void searchTaskByStatus_noTasksFound_returnsEmptyList() {
+
+        when(taskRepository.findByTaskStatus(Status.PENDING)).thenReturn(List.of());
+
+        List<TaskResponseDto> result = taskService.searchTaskByStatus(Status.PENDING);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+
+        verify(taskRepository, times(1)).findByTaskStatus(Status.PENDING);
+        verify(taskMapper, never()).toDto(any());
+    }
+
 
 }
