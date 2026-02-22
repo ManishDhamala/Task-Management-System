@@ -2,6 +2,7 @@ package com.ingtech.taskmanagementsystem.service;
 
 import com.ingtech.taskmanagementsystem.dto.TaskRequestDto;
 import com.ingtech.taskmanagementsystem.dto.TaskResponseDto;
+import com.ingtech.taskmanagementsystem.exception.TaskNotFoundException;
 import com.ingtech.taskmanagementsystem.mapper.TaskMapper;
 import com.ingtech.taskmanagementsystem.model.Status;
 import com.ingtech.taskmanagementsystem.model.Task;
@@ -19,9 +20,9 @@ import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -153,6 +154,46 @@ class TaskServiceImplTest {
         verify(taskMapper, times(1)).toDto(task2);
 
     }
+
+
+    @Test
+    void getTaskById_returnsTaskResponseDto() {
+
+        when(taskRepository.findById(1L)).thenReturn(Optional.of(task1));
+        when(taskMapper.toDto(task1)).thenReturn(responseDto1);
+
+        // Act
+        TaskResponseDto result = taskService.getTaskById(1L);
+
+        //Assert
+        assertNotNull(result);
+        assertEquals(responseDto1.getId(), result.getId());
+        assertEquals(responseDto1.getTitle(), result.getTitle());
+        assertEquals(responseDto1.getDescription(), result.getDescription());
+        assertEquals(responseDto1.getTaskStatus(), result.getTaskStatus());
+        assertEquals(requestDto.getDueDate(), result.getDueDate());
+
+        verify(taskRepository, times(1)).findById(1L);
+        verify(taskMapper, times(1)).toDto(task1);
+
+    }
+
+
+    @Test
+    void getTaskById_nonExistingId_throwsTaskNotFoundException(){
+
+        when(taskRepository.findById(15L)).thenReturn(Optional.empty());
+
+        TaskNotFoundException exception = assertThrows(TaskNotFoundException.class, ()-> taskService.getTaskById(15L));
+
+        assertEquals("Task not found with id: 15", exception.getMessage());
+
+        verify(taskRepository, times(1)).findById(15L);
+        verify(taskMapper, never()).toDto(any());  // verifies toDto method never executes when task is not found
+
+    }
+
+
 
 
 }

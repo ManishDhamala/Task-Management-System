@@ -81,6 +81,7 @@ public class TaskServiceImpl implements TaskService {
         taskRepository.delete(task);
     }
 
+
     @Transactional(readOnly = true)
     @Override
     public List<TaskResponseDto> searchTaskByStatus(Status taskStatus) {
