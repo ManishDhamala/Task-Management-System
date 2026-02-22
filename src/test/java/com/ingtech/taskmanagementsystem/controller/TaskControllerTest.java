@@ -22,8 +22,7 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -155,8 +154,24 @@ class TaskControllerTest {
 
     }
 
+    @Test
+    void updateTask_returnsUpdatedTaskResponseDto() throws Exception {
 
+        when(taskService.updateTask(any(Long.class), any(TaskRequestDto.class))).thenReturn(responseDto1);
 
+        mockMvc.perform(put("/api/v1/task/{id}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestDto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(responseDto1.getId()))
+                .andExpect(jsonPath("$.title").value(responseDto1.getTitle()))
+                .andExpect(jsonPath("$.description").value(responseDto1.getDescription()))
+                .andExpect(jsonPath("$.taskStatus").value(responseDto1.getTaskStatus().name()))
+                .andExpect(jsonPath("$.dueDate").value(responseDto1.getDueDate().toString()));
+
+        verify(taskService, times(1)).updateTask(any(Long.class), any(TaskRequestDto.class));
+
+    }
 
 
 
