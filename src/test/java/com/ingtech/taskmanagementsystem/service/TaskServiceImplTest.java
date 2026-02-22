@@ -68,7 +68,7 @@ class TaskServiceImplTest {
         task2.setId(2L);
         task2.setTitle("Test Task 2");
         task2.setDescription("Test Description 2");
-        task2.setTaskStatus(Status.IN_PROGRESS);
+        task2.setTaskStatus(Status.PENDING);
         task2.setDueDate(LocalDate.of(2026, 9, 30));
 
 
@@ -83,7 +83,7 @@ class TaskServiceImplTest {
         responseDto2.setId(2L);
         responseDto2.setTitle("Test Task 2");
         responseDto2.setDescription("Test Description 2");
-        responseDto2.setTaskStatus(Status.IN_PROGRESS);
+        responseDto2.setTaskStatus(Status.PENDING);
         responseDto2.setDueDate(LocalDate.of(2026, 9, 30));
 
     }
@@ -144,7 +144,7 @@ class TaskServiceImplTest {
         assertEquals(2L, result.getContent().get(1).getId());
         assertEquals("Test Task 2", result.getContent().get(1).getTitle());
         assertEquals("Test Description 2", result.getContent().get(1).getDescription());
-        assertEquals(Status.IN_PROGRESS, result.getContent().get(1).getTaskStatus());
+        assertEquals(Status.PENDING, result.getContent().get(1).getTaskStatus());
         assertEquals(LocalDate.of(2026, 9, 30), result.getContent().get(1).getDueDate());
 
 
@@ -180,19 +180,47 @@ class TaskServiceImplTest {
 
 
     @Test
-    void getTaskById_nonExistingId_throwsTaskNotFoundException(){
+    void getTaskById_nonExistingId_throwsTaskNotFoundException() {
 
         when(taskRepository.findById(15L)).thenReturn(Optional.empty());
 
-        TaskNotFoundException exception = assertThrows(TaskNotFoundException.class, ()-> taskService.getTaskById(15L));
+        TaskNotFoundException exception = assertThrows(TaskNotFoundException.class, () -> taskService.getTaskById(15L));
 
         assertEquals("Task not found with id: 15", exception.getMessage());
 
         verify(taskRepository, times(1)).findById(15L);
         verify(taskMapper, never()).toDto(any());  // verifies toDto method never executes when task is not found
-
     }
 
+
+    @Test
+    void updateTask_verifyFields_returnsUpdatedTaskResponseDto() {
+
+        when(taskRepository.findById(1L)).thenReturn(Optional.of(task1));
+        when(taskRepository.save(task1)).thenReturn(task1);
+        when(taskMapper.toDto(task1)).thenReturn(responseDto1);
+
+        // Act
+        TaskResponseDto result = taskService.updateTask(1L, requestDto);
+
+        //Assert - fields are properly set as per the request
+        assertEquals(requestDto.getTitle(), task1.getTitle());
+        assertEquals(requestDto.getDescription(), task1.getDescription());
+        assertEquals(requestDto.getTaskStatus(), task1.getTaskStatus());
+        assertEquals(requestDto.getDueDate(), task1.getDueDate());
+
+        assertNotNull(result);
+        assertEquals(responseDto1.getId(), result.getId());
+        assertEquals(responseDto1.getTitle(), result.getTitle());
+        assertEquals(responseDto1.getDescription(), result.getDescription());
+        assertEquals(responseDto1.getTaskStatus(), result.getTaskStatus());
+        assertEquals(responseDto1.getDueDate(), result.getDueDate());
+
+
+        verify(taskRepository, times(1)).findById(1L);
+        verify(taskRepository, times(1)).save(task1);
+        verify(taskMapper, times(1)).toDto(task1);
+    }
 
 
 
