@@ -10,14 +10,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -104,8 +109,32 @@ class TaskControllerTest {
 
     }
 
+    @Test
+    void getAllTasks_returnsPageOfTaskResponseDto() throws Exception {
 
+        Page<TaskResponseDto> taskPage = new PageImpl<>(List.of(responseDto1, responseDto2),
+                PageRequest.of(0, 3),
+                2
+        );
 
+        when(taskService.getAllTasks(PageRequest.of(0, 3))).thenReturn(taskPage);
+
+        mockMvc.perform(get("/api/v1/task")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content").isArray())
+                .andExpect(jsonPath("$.content.length()").value(2))
+                .andExpect(jsonPath("$.content[0].id").value(responseDto1.getId()))
+                .andExpect(jsonPath("$.content[0].title").value(responseDto1.getTitle()))
+                .andExpect(jsonPath("$.content[0].description").value(responseDto1.getDescription()))
+                .andExpect(jsonPath("$.content[0].taskStatus").value(responseDto1.getTaskStatus().name()))
+                .andExpect(jsonPath("$.content[0].dueDate").value(responseDto1.getDueDate().toString()))
+                .andExpect(jsonPath("$.page.totalElements").value(2))
+                .andExpect(jsonPath("$.page.totalPages").value(1));
+
+        verify(taskService, times(1)).getAllTasks(PageRequest.of(0, 3));
+
+    }
 
 
 }
