@@ -222,6 +222,16 @@ class TaskServiceImplTest {
         verify(taskMapper, times(1)).toDto(task1);
     }
 
+    @Test
+    void deleteTask() {
+
+        when(taskRepository.findById(1L)).thenReturn(Optional.of(task1));
+
+        taskService.deleteTask(1L);
+
+        verify(taskRepository, times(1)).findById(1L);
+        verify(taskRepository, times(1)).delete(task1);
+    }
 
 
 }
