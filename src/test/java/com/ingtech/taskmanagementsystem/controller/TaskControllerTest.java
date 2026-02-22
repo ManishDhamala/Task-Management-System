@@ -120,6 +120,8 @@ class TaskControllerTest {
         when(taskService.getAllTasks(PageRequest.of(0, 3))).thenReturn(taskPage);
 
         mockMvc.perform(get("/api/v1/task")
+                        .param("page", "0")
+                        .param("size", "3")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray())
@@ -135,6 +137,28 @@ class TaskControllerTest {
         verify(taskService, times(1)).getAllTasks(PageRequest.of(0, 3));
 
     }
+
+    @Test
+    void getTaskById_returnsTaskResponseDto() throws Exception {
+        when(taskService.getTaskById(1L)).thenReturn(responseDto1);
+
+        mockMvc.perform(get("/api/v1/task/{id}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(responseDto1.getId()))
+                .andExpect(jsonPath("$.title").value(responseDto1.getTitle()))
+                .andExpect(jsonPath("$.description").value(responseDto1.getDescription()))
+                .andExpect(jsonPath("$.taskStatus").value(responseDto1.getTaskStatus().name()))
+                .andExpect(jsonPath("$.dueDate").value(responseDto1.getDueDate().toString()));
+
+        verify(taskService, times(1)).getTaskById(1L);
+
+    }
+
+
+
+
+
 
 
 }
