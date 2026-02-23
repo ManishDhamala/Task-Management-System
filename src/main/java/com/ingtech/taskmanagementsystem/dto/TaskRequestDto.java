@@ -15,10 +15,10 @@ import java.time.LocalDate;
 public class TaskRequestDto {
 
     @NotBlank(message = "Title is required")
-    @Size(max = 100, message = "Title should not exceed 200 characters")
+    @Size(max = 100, message = "Title should not exceed 100 characters")
     private String title;
 
-    @Size(max = 500, message = "Description should not exceed 600 characters")
+    @Size(max = 500, message = "Description should not exceed 500 characters")
     private String description;
 
     @NotNull(message = "Please provide a task status")

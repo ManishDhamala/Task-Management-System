@@ -5,18 +5,21 @@ import com.ingtech.taskmanagementsystem.dto.TaskResponseDto;
 import com.ingtech.taskmanagementsystem.model.Status;
 import com.ingtech.taskmanagementsystem.service.TaskService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 
-@RequestMapping("api/v1/task")
+@RequestMapping("/api/v1/task")
+@Validated
 @RequiredArgsConstructor
 @RestController
 public class TaskController {
@@ -44,19 +47,19 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TaskResponseDto> getTaskById(@PathVariable Long id) {
+    public ResponseEntity<TaskResponseDto> getTaskById(@PathVariable @Positive Long id) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(taskService.getTaskById(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TaskResponseDto> updateTask(@PathVariable Long id, @Valid @RequestBody TaskRequestDto dto) {
+    public ResponseEntity<TaskResponseDto> updateTask(@PathVariable @Positive Long id, @Valid @RequestBody TaskRequestDto dto) {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(taskService.updateTask(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteTask(@PathVariable @Positive Long id) {
         taskService.deleteTask(id);
         return ResponseEntity.noContent().build();  // Returns 204 - No content
     }

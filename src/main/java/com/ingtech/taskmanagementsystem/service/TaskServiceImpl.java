@@ -66,9 +66,9 @@ public class TaskServiceImpl implements TaskService {
         task.setTaskStatus(dto.getTaskStatus());
         task.setDueDate(dto.getDueDate());
 
-        taskRepository.save(task);
+        Task updatedTask = taskRepository.save(task);
 
-        return taskMapper.toDto(task);
+        return taskMapper.toDto(updatedTask);
     }
 
     @Transactional
@@ -93,7 +93,6 @@ public class TaskServiceImpl implements TaskService {
 
         return tasks;
     }
-
 
 
 
