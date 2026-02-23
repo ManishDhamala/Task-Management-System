@@ -41,7 +41,10 @@ Here's how to install my project:
 git clone https://github.com/ManishDhamala/Task-Management-System.git
 cd Task-Management-System
 
-# Configure the database in the src/main/resources/application.properties
+# Configure application.properties
+server.port=8081
+
+#Database configuration
 spring.datasource.url=your_database_url
 spring.datasource.username=your_username
 spring.datasource.password=your_password
