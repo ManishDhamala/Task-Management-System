@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 @Aspect
 public class LoggingAspect {
 
+    // returnType packageName.ClassName.methodName(args)
 
     @AfterThrowing(value = "execution(* com.ingtech.taskmanagementsystem.service.*.*(..))",
             throwing = "ex")
