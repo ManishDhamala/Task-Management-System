@@ -39,7 +39,6 @@ public class TaskServiceImpl implements TaskService {
     public Page<TaskResponseDto> getAllTasks(Pageable pageable) {
         Page<TaskResponseDto> tasks = taskRepository.findAll(pageable)
                 .map(task -> taskMapper.toDto(task));
-
         return tasks;
     }
 
@@ -93,7 +92,5 @@ public class TaskServiceImpl implements TaskService {
 
         return tasks;
     }
-
-
 
 }

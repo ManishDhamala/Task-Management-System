@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  # Spring Boot application container
+  app:
+    build: .
+    ports:
+      # Maps port 8081 on the host machine to port 8081 inside the container.
+      # Format: HOST_PORT:CONTAINER_PORT
+      - "8081:8081"
+    networks:
+      - my-network
+
+  # PostgreSQL database container
+  postgres:
+    image: postgres:latest
+    environment:
+      # Database credentials and database name used when the container starts.
+      POSTGRES_USER: manish
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: test
+    ports:
+      # Exposes PostgreSQL on port 5432.
+      - "5432:5432"
+    networks:
+      - my-network
+    volumes:
+      # Stores PostgreSQL data in a Docker volume so it persists even if the container is stopped or removed.
+      - postgres-t-data:/var/lib/postgresql
+
+# Custom bridge network that allows the application and PostgreSQL containers to communicate with each other.
+networks:
+  my-network:
+    driver: bridge
+
+# Named Docker volume used to persist PostgreSQL data.
+# The data remains even after the container is deleted, unless the volume is explicitly removed.
+volumes:
+  postgres-t-data:

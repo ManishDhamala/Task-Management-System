@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -28,6 +29,14 @@ public class TaskController {
 
     @PostMapping
     public ResponseEntity<TaskResponseDto> createTask(@Valid @RequestBody TaskRequestDto dto) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(taskService.createTask(dto));
+    }
+
+    // Docker
+    @GetMapping("/add")
+    public ResponseEntity<TaskResponseDto> addTask() {
+        TaskRequestDto dto = new TaskRequestDto("Check TMS", "Test-1", Status.PENDING, LocalDate.now());
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(taskService.createTask(dto));
     }
@@ -69,6 +78,5 @@ public class TaskController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(taskService.searchTaskByStatus(status));
     }
-
 
 }
