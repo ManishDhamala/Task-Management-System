@@ -10,6 +10,9 @@ services:
       - "8081:8081"
     networks:
       - my-network
+    depends_on:
+      # Depends on postgres container
+      - postgres
 
   # PostgreSQL database container
   postgres:

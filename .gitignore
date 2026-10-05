@@ -32,7 +32,4 @@ build/
 ### VS Code ###
 .vscode/
 
-#Ignore application.properties and yml file in git
-src/main/resources/application.properties
-src/main/resources/application.yml
 
